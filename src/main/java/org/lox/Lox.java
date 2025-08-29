@@ -11,18 +11,33 @@ import java.util.Scanner;
 
 
 public class Lox {
+    static boolean hadError = false;
 
     private static void run(String sourceInput) {
         Scanner scanner = new Scanner(sourceInput);
         List<Token> tokens = scanner.scanTokens();
 
         for(Token token : tokens) {
-            System.out.println(token);
+            System.out.println();
         }
+    }
+
+    static void error(String message, int line) {
+        report(line, "", message);
+    }
+
+    private static void report(int lineNumber, String errorLine, String message) {
+        System.err.println("[line " + lineNumber + "] Error" + errorLine + ": " + message);
+        hadError = true;
     }
     private static void processInputFile(String inputFilePath) throws IOException {
         byte[] bytes = Files.readAllBytes(Paths.get(inputFilePath));
         run(new String(bytes, Charset.defaultCharset()));
+
+        if(hadError) {
+            System.exit(0);
+        }
+        hadError = false;
     }
 
     private static void processInputPrompt() throws IOException {
